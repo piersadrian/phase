@@ -2,6 +2,11 @@ require "commander"
 require "terminal-table"
 require "colorize"
 require "fog"
+require "dotenv"
+
+if defined?(::Dotenv)
+  ::Dotenv.load
+end
 
 require "exos/version"
 
