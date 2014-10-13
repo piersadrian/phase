@@ -1,14 +1,15 @@
-module Cloud
+module Exos
   module Commands
     class SSH < Command
 
       command :ssh do |c|
-        c.syntax = "cloud ssh [-i instance_id] [-n instance_name] [-r instance_role] [-u user] [username@instance_name|instance_id]"
+        c.syntax = "exos ssh [-i instance_id] [-n instance_name] [-r instance_role] [-u user] [username@instance_name|instance_id]"
 
         c.option "-i", "--id instance_id", String, "Connects to the instance with this ID."
         c.option "-n", "--name instance_name", String, "Connects to the instance with this 'Name' tag."
         c.option "-r", "--role instance_role", String, "Connects to an instance with this 'Role' tag. Default is 'ssh'."
         c.option "-u", "--user username", String, "Remote username to connect with."
+        c.option "-p", "--proto protocol", String, "Forces protocol to either 'mosh' or 'ssh'."
 
         c.description = "Connects to the the specified instance. Tries to connect with mosh, then SSH."
         c.action do |args, options|
@@ -16,6 +17,8 @@ module Cloud
           new(args, options).run
         end
       end
+
+      PROTOCOLS = %w(mosh ssh).freeze
 
       def run
         # Handle "connection string" style parameter.
@@ -44,10 +47,15 @@ module Cloud
         puts "Connecting to instance #{ instance.id }..."
         host = "#{ user }@#{ instance.dns_name }"
 
-        begin
-          exec "mosh #{ host }"
-        rescue Errno::ENOENT
-          exec "ssh #{ host }"
+        if options.proto
+          abort "Unknown protocol '#{ options.proto }'." unless PROTOCOLS.include?(options.proto)
+          exec "#{ options.proto } #{ host }"
+        else
+          begin
+            exec "mosh #{ host }"
+          rescue Errno::ENOENT
+            exec "ssh #{ host }"
+          end
         end
       end
 

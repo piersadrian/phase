@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'cloud/version'
+require 'exos/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "cloud"
-  spec.version       = Cloud::VERSION
+  spec.name          = "exos"
+  spec.version       = Exos::VERSION
   spec.authors       = ["Piers Mainwaring"]
   spec.email         = ["piers@impossibly.org"]
   spec.summary       = %q{Write a short summary. Required.}

@@ -1,11 +1,11 @@
 require 'json'
 
-module Cloud
+module Exos
   module Commands
     class Keys < Command
 
       command :keys do |c|
-        c.syntax = "cloud keys [-a email_address] [-r email_address [--delete]] [-r bastion_role]"
+        c.syntax = "exos keys [--grant email_address] [--revoke email_address [--delete]] [--role bastion_role]"
 
         c.option "--grant email_address", String, "Add access for user with email_address."
         c.option "--revoke email_address", String, "Revoke access for user with email_address."
@@ -21,12 +21,13 @@ module Cloud
       end
 
       PATTERN_KEY_LINE   = /ssh-rsa/
-      PATTERN_ATTRS_LINE = /\A### cloud-key (.*)/
+      PATTERN_ATTRS_LINE = /\A### exos-key (.*)/
 
-      LOCKFILE_NAME = "cloud.keys.lock"
+      LOCKFILE_NAME = "exos.keys.lock"
 
       def run
         authorized_keys.backup!
+        Bastions.role = options.role
 
         if email = options.grant
           add_key(email)
@@ -119,7 +120,7 @@ module Cloud
             end
 
             def backup!
-              File.open( File.expand_path("~/.cloud-keys"), "w" ) { |file| file << raw_keys }
+              File.open( File.expand_path("~/.exos-keys"), "w" ) { |file| file << raw_keys }
             end
 
             def initialize(*)
@@ -131,7 +132,7 @@ module Cloud
               while idx < lines.count
                 attrs_line = lines[idx]
 
-                unless attrs_line.match(/\A### cloud-key/)
+                unless attrs_line.match(/\A### exos-key/)
                   idx += 1
                   next
                 end
@@ -232,7 +233,7 @@ module Cloud
           def uncomment(key); self.key.sub(/\A# /, ""); end
 
           def to_s
-            escape( ["", "### cloud-key #{ JSON.dump(attributes) }", self.key, ""].join("\n") )
+            escape( ["", "### exos-key #{ JSON.dump(attributes) }", self.key, ""].join("\n") )
           end
 
           def escape(text)
@@ -243,10 +244,11 @@ module Cloud
 
         class Bastions
           class << self
+            attr_accessor :role
 
             def all
               @all ||= begin
-                bastions = ec2.servers.all("tag:Name" => "harpoon-2").map do |bastion|
+                bastions = ec2.servers.all("tag:Role" => role).map do |bastion|
                   bastion.username = "deploy"
                   bastion
                 end
@@ -261,7 +263,7 @@ module Cloud
 
               all.each do |bastion|
                 if bastion.ssh("ls #{ LOCKFILE_NAME }").first.status == 0
-                  abort "Another `cloud keys` operation is in progress."
+                  abort "Another `exos keys` operation is in progress."
                 end
 
                 commands = ["touch #{ LOCKFILE_NAME }", *cmds, "rm #{ LOCKFILE_NAME }"]

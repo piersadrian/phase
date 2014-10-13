@@ -1,4 +1,4 @@
-module Cloud
+module Exos
   module Commands
     class Command
 

@@ -4,19 +4,19 @@ VERSION=$(shell cat VERSION)
 default: clean all
 all: build install alias
 
-build: lib/cloud/version.rb
-	gem build cloud.gemspec
+build: lib/exos/version.rb
+	gem build exos.gemspec
 
-lib/cloud/version.rb:
+lib/exos/version.rb:
 	mkdir -p $(@D)
-	@echo 'module Cloud\n	VERSION = "$(VERSION)"\nend' > $@
+	@echo 'module Exos\n	VERSION = "$(VERSION)"\nend' > $@
 
 install:
-	gem install cloud-$(VERSION).gem --no-rdoc --no-ri
+	gem install exos-$(VERSION).gem --no-rdoc --no-ri
 	rbenv rehash
 
 alias:
-	alias cloud=/Users/piers/.rbenv/shims/cloud
+	alias exos=/Users/piers/.rbenv/shims/exos
 
 clean:
-	rm -rf lib/cloud/version.rb
+	rm -rf lib/exos/version.rb

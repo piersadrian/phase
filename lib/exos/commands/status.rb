@@ -1,9 +1,9 @@
-module Cloud
+module Exos
   module Commands
     class Status < Command
 
       command :status do |c|
-        c.syntax = "cloud status"
+        c.syntax = "exos status"
         c.description = "Prints the current status of configured VPCs, subnets, and EC2 instances."
         c.action do |args, options|
           new(args, options).run
