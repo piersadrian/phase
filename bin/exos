@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-$:.unshift File.expand_path('../../lib', __FILE__)
 
 require "exos"
-::Exos::Application.new.run if $0 == __FILE__
+::Exos::Application.new.run
