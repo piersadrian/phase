@@ -93,7 +93,7 @@ module Exos
 
             authorized_keys.persist!
           else
-            abort "No key found."
+            fail "No key found."
           end
 
           print_keys_list
@@ -188,7 +188,7 @@ module Exos
 
           def key=(text)
             if text && !text.match(/\A(# )?ssh-rsa .+/)
-              abort "Invalid key."
+              fail "Invalid key."
             end
 
             @key = text
@@ -253,7 +253,7 @@ module Exos
                   bastion
                 end
 
-                abort "No bastions found with role '#{ options.role }'." unless bastions.any?
+                fail "No bastions found with role '#{ options.role }'." unless bastions.any?
                 bastions
               end
             end
@@ -263,7 +263,7 @@ module Exos
 
               all.each do |bastion|
                 if bastion.ssh("ls #{ LOCKFILE_NAME }").first.status == 0
-                  abort "Another `exos keys` operation is in progress."
+                  fail "Another `exos keys` operation is in progress."
                 end
 
                 commands = ["touch #{ LOCKFILE_NAME }", *cmds, "rm #{ LOCKFILE_NAME }"]

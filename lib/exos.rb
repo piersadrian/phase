@@ -13,6 +13,7 @@ require "exos/version"
 require "exos/commands"
 require "exos/commands/status"
 require "exos/commands/ssh"
+require "exos/commands/mosh"
 require "exos/commands/keys"
 
 module Exos

@@ -9,30 +9,28 @@ module Exos
         c.option "-n", "--name instance_name", String, "Connects to the instance with this 'Name' tag."
         c.option "-r", "--role instance_role", String, "Connects to an instance with this 'Role' tag. Default is 'ssh'."
         c.option "-u", "--user username", String, "Remote username to connect with."
-        c.option "-p", "--proto protocol", String, "Forces protocol to either 'mosh' or 'ssh'."
+        c.option "-c", "--conn conn_str", String, "Invokes conn_str to establish terminal session (e.g. --ssh 'ssh -i key.pem')."
 
-        c.description = "Connects to the the specified instance. Tries to connect with mosh, then SSH."
+        c.description = "Connects to the the specified instance via SSH."
         c.action do |args, options|
-          options.default role: "ssh"
+          options.default role: "ssh", conn: "ssh"
           new(args, options).run
         end
       end
-
-      PROTOCOLS = %w(mosh ssh).freeze
 
       def run
         # Handle "connection string" style parameter.
         if conn = args.first
           user, str = conn.split("@")
 
-          abort "Malformed parameter: user@[instance-name|instance-id]." if str.nil?
+          fail "Malformed parameter: user@[instance-name|instance-id]." if str.nil?
 
           str.match(/i-[0-9a-f]+/i) ? options.id = str : options.name = str
         else
           user = options.user
         end
 
-        abort "Must specify username with -u or 'user@instance-name' parameter." if user.nil?
+        fail "Must specify username with -u or 'user@instance-name' parameter." if user.nil?
 
         if options.id
           instance = ec2.servers.all("instance-id" => options.id).first
@@ -42,21 +40,11 @@ module Exos
           instance = ec2.servers.all("tag:Role" => options.role).first
         end
 
-        abort "No instance found. Exiting." if instance.nil?
+        fail "No instance found. Exiting." if instance.nil?
 
-        puts "Connecting to instance #{ instance.id }..."
-        host = "#{ user }@#{ instance.dns_name }"
-
-        if options.proto
-          abort "Unknown protocol '#{ options.proto }'." unless PROTOCOLS.include?(options.proto)
-          exec "#{ options.proto } #{ host }"
-        else
-          begin
-            exec "mosh #{ host }"
-          rescue Errno::ENOENT
-            exec "ssh #{ host }"
-          end
-        end
+        log "connecting to instance #{ instance.id } via SSH..."
+        connection_cmd = "#{ options.conn } #{ user }@#{ instance.dns_name }"
+        exec connection_cmd
       end
 
     end

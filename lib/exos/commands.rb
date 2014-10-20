@@ -15,6 +15,18 @@ module Exos
 
       private
 
+        def log(str)
+          out = "[exos]".green
+          out << " #{ str }"
+          puts out
+        end
+
+        def fail(str)
+          out = "[exos]".red
+          out << " #{ str }"
+          abort out
+        end
+
         def ec2
           @ec2 ||= ::Fog::Compute::AWS.new
         end
