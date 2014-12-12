@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'commander',      '~> 4.2'
   spec.add_runtime_dependency 'terminal-table', '~> 1.4'
   spec.add_runtime_dependency 'progressbar',    '~> 0.21.0'
-  spec.add_runtime_dependency 'activesupport',  '~> 4.0.10'
+  spec.add_runtime_dependency 'activesupport',  '>= 4.0.10'
   spec.add_runtime_dependency 'fog',            '~> 1.23'
   spec.add_runtime_dependency 'capistrano',     '~> 3.2.1'
   spec.add_runtime_dependency 'mina',           '~> 0.3'
