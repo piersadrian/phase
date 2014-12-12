@@ -1,9 +1,9 @@
-module Exos
+module Phase
   module Commands
     class Logs < Command
 
       command :logs do |c|
-        c.syntax = "exos logs [--tail]"
+        c.syntax = "phase logs [--tail]"
 
         c.option "-t", "--tail", "Stream logs."
 

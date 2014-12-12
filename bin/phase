@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "phase"
+require "phase/cli"
+::Phase::CLI.new.run

@@ -1,4 +1,4 @@
-Copyright (c) 2014 Piers Mainwaring
+Copyright (c) 2014 Orca Health, Inc.
 
 MIT License
 

@@ -1,3 +1,3 @@
-module Exos
+module Phase
 	VERSION = "0.0.1"
 end

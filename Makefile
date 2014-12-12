@@ -4,19 +4,19 @@ VERSION=$(shell cat VERSION)
 default: clean all
 all: build install alias
 
-build: lib/exos/version.rb
-	gem build exos.gemspec
+build: lib/phase/version.rb
+	gem build phase.gemspec
 
-lib/exos/version.rb:
+lib/phase/version.rb:
 	mkdir -p $(@D)
-	@echo 'module Exos\n	VERSION = "$(VERSION)"\nend' > $@
+	@echo 'module Phase\n	VERSION = "$(VERSION)"\nend' > $@
 
 install:
-	gem install exos-$(VERSION).gem --no-rdoc --no-ri
+	gem install phase-$(VERSION).gem --no-rdoc --no-ri
 	rbenv rehash
 
 alias:
-	alias exos=/Users/piers/.rbenv/shims/exos
+	alias phase=/Users/piers/.rbenv/shims/phase
 
 clean:
-	rm -rf lib/exos/version.rb
+	rm -rf lib/phase/version.rb
