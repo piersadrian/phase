@@ -1,21 +1,22 @@
-require "terminal-table"
-require "active_support"
-require "progressbar"
-require "colorize"
-require "fog"
-require "sshkit"
+require 'terminal-table'
+require 'active_support'
+require 'progressbar'
+require 'colorize'
+require 'fog'
+require 'sshkit'
 
-require "dotenv"
+require 'dotenv'
 ::Dotenv.load if defined?(::Dotenv)
 
-require "phase/adapters/aws"
+require 'phase/adapters/abstract'
+require 'phase/adapters/aws'
 
-require "phase/ssh/backend"
-require "phase/ssh/command"
-require "phase/ssh/coordinator"
+require 'phase/ssh/backend'
+require 'phase/ssh/command'
+require 'phase/ssh/coordinator'
 
-require "phase/configuration"
-require "phase/version"
+require 'phase/configuration'
+require 'phase/version'
 
 
 module Phase
