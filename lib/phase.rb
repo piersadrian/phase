@@ -8,11 +8,15 @@ require "sshkit"
 require "dotenv"
 ::Dotenv.load if defined?(::Dotenv)
 
-require "phase/version"
+require "phase/adapters/aws"
+
+require "phase/ssh/backend"
+require "phase/ssh/command"
+require "phase/ssh/coordinator"
+
 require "phase/configuration"
-require "phase/backend"
-require "phase/command"
-require "phase/runner"
+require "phase/version"
+
 
 module Phase
   class << self
@@ -22,10 +26,10 @@ module Phase
     end
 
     def reset_config!
-      @@config = Configuration.new
+      @@config = nil
     end
 
   end
 
-  reset_config!
+  config
 end

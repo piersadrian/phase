@@ -2,13 +2,19 @@ module Phase
   class Configuration
 
     attr_accessor :use_bastions,
-                  :bastion_role
+                  :bastion_role,
+                  :bastion_user,
+
+                  :aws_region
 
     def initialize
       @use_bastions = false
       @bastion_role = nil
+      @bastion_user = nil
 
-      ::SSHKit.config.backend = Backend
+      @aws_region   = "us-east-1"
+
+      ::SSHKit.config.backend = SSH::Backend
 
       configure_from_yml if defined?(::Rails) && yml_present?
     end
@@ -18,6 +24,9 @@ module Phase
 
       @use_bastions = yml_config[:use_bastions] if yml_config.has_key(:use_bastions)
       @bastion_role = yml_config[:bastion_role] if yml_config.has_key(:bastion_role)
+      @bastion_user = yml_config[:bastion_user] if yml_config.has_key(:bastion_user)
+
+      @aws_region = yml_config[:aws_region] if yml_config.has_key(:aws_region)
     end
 
     def yml_present?
