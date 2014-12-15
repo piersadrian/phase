@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Phase::VERSION
   spec.authors       = ["Piers Mainwaring", "Orca Health, Inc."]
   spec.email         = ["piers@impossibly.org"]
-  spec.summary       = %q{Write a short summary. Required.}
-  spec.description   = %q{Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = "Provides a simple API for managing cloud instances running in a multi-subnet network."
+  spec.description   = ""
+  spec.homepage      = "https://github.com/piersadrian/phase"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -20,13 +20,13 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'commander',      '~> 4.2'
   spec.add_runtime_dependency 'terminal-table', '~> 1.4'
-  spec.add_runtime_dependency 'progressbar',    '~> 0.21.0'
-  spec.add_runtime_dependency 'activesupport',  '>= 4.0.10'
+  spec.add_runtime_dependency 'progressbar',    '~> 0.21'
+  spec.add_runtime_dependency 'activesupport',  '~> 4'
   spec.add_runtime_dependency 'fog',            '~> 1.23'
-  spec.add_runtime_dependency 'capistrano',     '~> 3.2.1'
+  spec.add_runtime_dependency 'capistrano',     '~> 3.2'
   spec.add_runtime_dependency 'mina',           '~> 0.3'
   spec.add_runtime_dependency 'colorize',       '~> 0.7'
-  spec.add_runtime_dependency 'dotenv',         '>= 0.11.0'
+  spec.add_runtime_dependency 'dotenv',         '~> 0.11'
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake",    "~> 10.1"
