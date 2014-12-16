@@ -19,6 +19,11 @@ module Phase
         end
 
         class << self
+          # @return [Array<AWS::LoadBalancer>] All known ELB instances
+          def all
+            api.load_balancers.all.map {|balancer| new(balancer) }
+          end
+
           # @param [String] balancer_name The name of the requested ELB instance
           # @return [AWS::LoadBalancer] The requested ELB instance
           def find(balancer_name)

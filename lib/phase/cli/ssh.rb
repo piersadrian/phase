@@ -1,5 +1,5 @@
 module Phase
-  module Commands
+  module CLI
     class SSH < Command
 
       command :ssh do |c|
@@ -13,7 +13,7 @@ module Phase
 
         c.description = "Connects to the the specified instance via SSH."
         c.action do |args, options|
-          options.default role: "ssh", conn: "ssh -A"
+          options.default role: ::Phase.config.bastion_role, conn: "ssh -A"
           new(args, options).run
         end
       end
@@ -48,11 +48,11 @@ module Phase
         def instance
           @instance ||= begin
             if options.id
-              instance = ec2.servers.all("instance-id" => options.id).first
+              instance = ::Phase::Adapters::AWS::Server.find(options.id)
             elsif options.name
-              instance = ec2.servers.all("tag:Name" => options.name).first
-            else
-              instance = ec2.servers.all("tag:Role" => options.role).first
+              instance = ::Phase::Adapters::AWS::Server.where(name: options.name)
+            elsif options.role
+              instance = ::Phase::Adapters::AWS::Server.where(role: options.role)
             end
 
             fail "no instance found." if instance.nil?

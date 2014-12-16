@@ -8,6 +8,10 @@ module Phase
         end
 
         class << self
+          def all(network_id)
+            raise NotImplementedError
+          end
+
           def find(network_id)
             raise NotImplementedError
           end

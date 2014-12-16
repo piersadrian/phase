@@ -17,6 +17,11 @@ module Phase
         end
 
         class << self
+          # @return [Array<AWS::Network>] All known VPC instances
+          def all
+            api.vpcs.all.map {|network| new(network) }
+          end
+
           # @param [String] network_id The ID of the requested VPC
           # @return [AWS::Network, nil] The requested VPC
           def find(network_id)

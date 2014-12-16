@@ -12,6 +12,10 @@ module Phase
         end
 
         class << self
+          def all(balancer_id)
+            raise NotImplementedError
+          end
+
           def find(balancer_id)
             raise NotImplementedError
           end

@@ -1,5 +1,5 @@
 module Phase
-  module Commands
+  module CLI
     class Status < Command
 
       command :status do |c|
@@ -11,10 +11,10 @@ module Phase
       end
 
       def run
-        @vpcs    = ec2.vpcs
-        @subnets = ec2.subnets
-        @servers = ec2.servers
-        @elbs    = elb.load_balancers
+        @vpcs    = ::Phase::Adapters::AWS::Network.all
+        @subnets = ::Phase::Adapters::AWS::Subnet.all
+        @servers = ::Phase::Adapters::AWS::Server.all
+        @elbs    = ::Phase::Adapters::AWS::LoadBalancer.all
 
         print_vpc_tables
         print_servers_table
@@ -25,30 +25,30 @@ module Phase
           table = ::Terminal::Table.new(title: "VPC Status")
 
           add_section_headers(table, ["VPC ID", "Name", "State", "CIDR Block", "Tenancy"])
-          color = vpc.state == "available" ? :green : :light_red
+          color = vpc.resource.state == "available" ? :green : :light_red
           add_row(table, color, [
-            vpc.id,
-            vpc.tags["Name"] || vpc.tags["name"],
-            vpc.state,
-            vpc.cidr_block,
-            vpc.tenancy
+            vpc.resource.id,
+            vpc.resource.tags["Name"] || vpc.resource.tags["name"],
+            vpc.resource.state,
+            vpc.resource.cidr_block,
+            vpc.resource.tenancy
           ])
 
           subnets = @subnets.select do |subnet|
-            subnet.vpc_id == vpc.id
+            subnet.resource.vpc_id == vpc.resource.id
           end
 
           return unless subnets.any?
 
           add_section_headers(table, ["Subnet ID", "Name", "State", "CIDR Block", "Availability Zone"])
           subnets.each do |subnet|
-            color = subnet.ready? ? :green : :light_red
+            color = subnet.resource.ready? ? :green : :light_red
             add_row(table, color, [
-              subnet.subnet_id,
-              subnet.tag_set["Name"] || subnet.tag_set["name"],
-              subnet.state,
-              subnet.cidr_block,
-              subnet.availability_zone
+              subnet.resource.subnet_id,
+              subnet.resource.tag_set["Name"] || subnet.resource.tag_set["name"],
+              subnet.resource.state,
+              subnet.resource.cidr_block,
+              subnet.resource.availability_zone
             ])
           end
 
@@ -58,23 +58,23 @@ module Phase
 
       def print_servers_table
         table  = ::Terminal::Table.new(title: "Instances")
-        groups = @servers.group_by(&:subnet_id)
+        groups = @servers.group_by {|s| s.resource.subnet_id }
 
         add_section_headers(table, ["ID", "Name", "Type", "State", "Public IP", "Private IP", "Subnet Name"])
 
         groups.each_pair do |subnet_id, servers|
           servers.each do |server|
-            color = server.ready? ? :green : :light_red
-            subnet = @subnets.find { |s| s.subnet_id == subnet_id }
-            subnet_name = subnet.tag_set["Name"] || subnet.tag_set["name"] if subnet
+            color = server.resource.ready? ? :green : :light_red
+            subnet = @subnets.find { |s| s.resource.subnet_id == subnet_id }
+            subnet_name = subnet.resource.tag_set["Name"] || subnet.resource.tag_set["name"] if subnet
 
             add_row(table, color, [
-              server.id,
-              server.tags["Name"] || server.tags["name"],
-              server.flavor_id,
-              server.state,
-              server.public_ip_address,
-              server.private_ip_address,
+              server.resource.id,
+              server.resource.tags["Name"] || server.resource.tags["name"],
+              server.resource.flavor_id,
+              server.resource.state,
+              server.resource.public_ip_address,
+              server.resource.private_ip_address,
               subnet_name
             ])
           end

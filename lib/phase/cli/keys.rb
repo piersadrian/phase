@@ -1,7 +1,7 @@
 require 'json'
 
 module Phase
-  module Commands
+  module CLI
     class Keys < Command
 
       command :keys do |c|

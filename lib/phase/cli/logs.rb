@@ -1,5 +1,5 @@
 module Phase
-  module Commands
+  module CLI
     class Logs < Command
 
       command :logs do |c|

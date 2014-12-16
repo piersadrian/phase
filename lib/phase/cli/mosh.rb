@@ -1,5 +1,5 @@
 module Phase
-  module Commands
+  module CLI
     class Mosh < SSH
 
       command :mosh do |c|

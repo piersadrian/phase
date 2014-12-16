@@ -2,4 +2,5 @@
 
 require "phase"
 require "phase/cli"
-::Phase::CLI.new.run
+
+::Phase::CLI::Application.new.run
