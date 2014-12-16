@@ -1,15 +1,17 @@
 module Phase
   module Adapters
     module Abstract
-      class Base
+      class Network < Base
 
-        attr_reader :resource
-
-        def initialize(resource)
-          @resource = resource
+        def servers
+          raise NotImplementedError
         end
 
         class << self
+          def find(network_id)
+            raise NotImplementedError
+          end
+
           private
 
             def api

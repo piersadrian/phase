@@ -1,2 +1,4 @@
-require 'phase/adapters/aws/load_balancing'
-require 'phase/adapters/aws/servers'
+require 'phase/adapters/aws/load_balancer'
+require 'phase/adapters/aws/network'
+require 'phase/adapters/aws/server'
+require 'phase/adapters/aws/subnet'
