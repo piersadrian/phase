@@ -20,7 +20,7 @@ module Phase
           # @option options [String] :name The value of the 'Name' tag
           # @option options [String] :role The value of the 'Role' tag
           # @option options [Array<String>] :instance_ids A list of specific instance IDs
-          # @option options [Array<String>] :subnet_id The ID of a subnet
+          # @option options [String] :subnet_id The ID of a subnet
           # @return [Array<AWS::Server>] All EC2 instances matching the optional filters
           def where(options = {})
             filters = {}

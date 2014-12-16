@@ -9,8 +9,8 @@ module Phase
 
     def initialize
       @use_bastions = false
-      @bastion_role = nil
-      @bastion_user = nil
+      @bastion_role = "ssh"
+      @bastion_user = "orca"
 
       @aws_region   = "us-east-1"
 

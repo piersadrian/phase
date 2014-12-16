@@ -3,6 +3,7 @@ require 'active_support'
 require 'progressbar'
 require 'colorize'
 require 'fog'
+require 'capistrano'
 require 'sshkit'
 
 require 'dotenv'

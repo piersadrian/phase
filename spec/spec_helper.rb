@@ -1,0 +1,2 @@
+require 'phase'
+require 'rspec'
