@@ -1,6 +1,6 @@
-require "phase/cli/command"
+require "phase/cli/mixins/loggable"
 
-require "phase/cli/utils/loggable"
+require "phase/cli/command"
 
 require "phase/cli/env"
 require "phase/cli/keys"

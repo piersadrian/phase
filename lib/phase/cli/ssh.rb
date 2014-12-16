@@ -1,6 +1,7 @@
 module Phase
   module CLI
     class SSH < Command
+      include Mixins::Loggable
 
       command :ssh do |c|
         c.syntax = "phase ssh [-i instance_id] [-n instance_name] [-r instance_role] [-u user] [-c conn_str] [username@instance_name|instance_id]"
@@ -22,8 +23,8 @@ module Phase
 
       def run
         parse_connection_string
-        log "connecting to instance #{ instance.id }..."
-        exec "#{ options.conn } #{ username }@#{ instance.dns_name }"
+        log "connecting to instance #{ instance.resource.id }..."
+        exec "#{ options.conn } #{ username }@#{ instance.resource.dns_name }"
       end
 
       private
@@ -50,9 +51,9 @@ module Phase
             if options.id
               instance = ::Phase::Adapters::AWS::Server.find(options.id)
             elsif options.name
-              instance = ::Phase::Adapters::AWS::Server.where(name: options.name)
+              instance = ::Phase::Adapters::AWS::Server.where(name: options.name).first
             elsif options.role
-              instance = ::Phase::Adapters::AWS::Server.where(role: options.role)
+              instance = ::Phase::Adapters::AWS::Server.where(role: options.role).first
             end
 
             fail "no instance found." if instance.nil?

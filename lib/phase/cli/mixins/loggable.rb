@@ -1,6 +1,6 @@
 module Phase
   module CLI
-    module Utils
+    module Mixins
       module Loggable
 
         def log(str)
