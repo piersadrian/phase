@@ -12,7 +12,7 @@ lib/phase/version.rb:
 	@echo 'module Phase\n	VERSION = "$(VERSION)"\nend' > $@
 
 reset:
-	cat /dev/null > lib/phase/version.rb
+	rm lib/phase/version.rb
 
 push:
 	gem push phase-$(VERSION).gem
