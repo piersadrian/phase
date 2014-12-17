@@ -15,7 +15,6 @@ require 'phase/adapters/aws'
 
 require 'phase/ssh/backend'
 require 'phase/ssh/command'
-require 'phase/ssh/coordinator'
 
 require 'phase/configuration'
 require 'phase/version'

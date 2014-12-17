@@ -7,18 +7,20 @@ module Phase
     # @see SSHKit::Coordinator for concurrency options
     # @return [void]
     def on_role(role_name, environment = "staging", options = {}, &block)
-      servers = ::Phase::Adapters::AWS::Server.where(role: role_name, environment: environment)
+      servers = ::Phase.servers.where(role: role_name, environment: environment)
       on(servers.map {|s| s.resource.private_ip_address }, options, &block)
     end
 
-    #
     def on(destination_ips, options = {}, &block)
-      server = ::Phase::Adapters::AWS::Server.where(role: ::Phase.config.bastion_role).first
+      server = ::Phase.servers.where(role: ::Phase.config.bastion_role).first
       raise ArgumentError, "no servers found" unless server
 
+      # TODO: identify the CORRECT bastion host per subnet/network
       bastion_host = "#{ ::Phase.config.bastion_user }@#{ server.resource.dns_name }"
-      coordinator  = SSH::Coordinator.new(bastion_host)
+      coordinator  = ::SSHKit::Coordinator.new(bastion_host)
 
+      # TODO: clean up this logic. this should be done within a coordinator
+      # (or elsewhere) so we can ID networks on a per-adapter basis
       results = Array(destination_ips).map do |ip|
         coordinator.each(options) do
           on_remote_host(ip) { instance_exec(&block) }
