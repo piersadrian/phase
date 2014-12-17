@@ -9,6 +9,7 @@ require 'sshkit'
 require 'dotenv'
 ::Dotenv.load if defined?(::Dotenv)
 
+require 'phase/adapter'
 require 'phase/adapters/abstract'
 require 'phase/adapters/aws'
 
@@ -29,6 +30,14 @@ module Phase
 
     def reset_config!
       @@config = nil
+    end
+
+    def configure(&block)
+      yield config
+    end
+
+    def adapter
+      config.adapter
     end
 
   end

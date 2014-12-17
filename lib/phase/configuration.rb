@@ -5,7 +5,9 @@ module Phase
                   :bastion_role,
                   :bastion_user,
 
-                  :aws_region
+                  :aws_region,
+
+                  :adapter
 
     def initialize
       @use_bastions = false
@@ -13,6 +15,8 @@ module Phase
       @bastion_user = "orca"
 
       @aws_region   = "us-east-1"
+
+      @adapter = ::Phase::Adapters::AWS
 
       ::SSHKit.config.backend = SSH::Backend
 
