@@ -19,13 +19,13 @@ module Phase
       bastion_host = "#{ ::Phase.config.bastion_user }@#{ server.resource.dns_name }"
       coordinator  = SSH::Coordinator.new(bastion_host)
 
-      Array(destination_ips).each do |ip|
+      results = Array(destination_ips).map do |ip|
         coordinator.each(options) do
           on_remote_host(ip) { instance_exec(&block) }
         end
       end
 
-      true
+      results.flatten
     end
 
     def run_locally(&block)
