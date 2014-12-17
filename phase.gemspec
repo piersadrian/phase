@@ -8,10 +8,12 @@ Gem::Specification.new do |spec|
   spec.version       = Phase::VERSION
   spec.authors       = ["Piers Mainwaring", "Orca Health, Inc."]
   spec.email         = ["piers@impossibly.org"]
-  spec.summary       = "Provides a simple API for managing cloud instances running in a multi-subnet network."
+  spec.summary       = "A simple way to manage cloud instances within a multi-subnet network, like an AWS VPC."
   spec.description   = ""
   spec.homepage      = "https://github.com/piersadrian/phase"
   spec.license       = "MIT"
+
+  spec.required_ruby_version = '~> 2.0'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
