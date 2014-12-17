@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'activesupport',  '~> 4'
   spec.add_runtime_dependency 'fog',            '~> 1.23'
   spec.add_runtime_dependency 'capistrano',     '~> 3.2'
-  spec.add_runtime_dependency 'mina',           '~> 0.3'
   spec.add_runtime_dependency 'colorize',       '~> 0.7'
   spec.add_runtime_dependency 'dotenv',         '~> 0.11'
 
