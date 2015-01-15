@@ -15,6 +15,8 @@ module Phase
             new(api.servers.get(instance_id))
           end
 
+          # Finds servers through the provided filter options.
+          #
           # @param [Hash] options Filtering options
           # @option options [String] :vpc_id The ID of a VPC
           # @option options [String] :name The value of the 'Name' tag
@@ -26,13 +28,12 @@ module Phase
           def where(options = {})
             filters = {}
 
-            filters["vpc-id"] = options.delete(:vpc_id)       if options[:vpc_id]
-            filters["tag:Name"] = options.delete(:name)       if options[:name]
-            filters["instance-ids"] = options.delete(:ids)    if options[:ids]
-            filters["subnet-id"] = options.delete(:subnet_id) if options[:subnet_id]
-
-            filters["tag:Role"] = options.delete(:role)               if options[:role]
-            filters["tag:Environment"] = options.delete(:environment) if options[:environment]
+            filters["vpc-id"] = options.delete(:vpc_id)               if options.has_key?(:vpc_id)
+            filters["tag:Name"] = options.delete(:name)               if options.has_key?(:name)
+            filters["instance-ids"] = options.delete(:ids)            if options.has_key?(:ids)
+            filters["subnet-id"] = options.delete(:subnet_id)         if options.has_key?(:subnet_id)
+            filters["tag:Role"] = options.delete(:role)               if options.has_key?(:role)
+            filters["tag:Environment"] = options.delete(:environment) if options.has_key?(:environment)
 
             if options.any?
               raise ArgumentError, "Unknown filters '#{options.keys.join(", ")}'!"

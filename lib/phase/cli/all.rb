@@ -1,5 +1,3 @@
-require "phase/cli/mixins/loggable"
-
 require "phase/cli/command"
 
 require "phase/cli/env"

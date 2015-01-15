@@ -13,8 +13,13 @@ require 'phase/adapter'
 require 'phase/adapters/abstract'
 require 'phase/adapters/aws'
 
+require "phase/mixins/loggable"
+
 require 'phase/ssh/backend'
+# require 'phase/ssh/bastion'
+require 'phase/ssh/bastion_coordinator'
 require 'phase/ssh/command'
+require 'phase/ssh/runners'
 
 require 'phase/configuration'
 require 'phase/version'
@@ -41,5 +46,5 @@ module Phase
 
   end
 
-  config
+  class ResourceNotFoundError < ::StandardError; end
 end

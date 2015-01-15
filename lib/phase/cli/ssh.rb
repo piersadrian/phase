@@ -1,7 +1,7 @@
 module Phase
   module CLI
     class SSH < Command
-      include Mixins::Loggable
+      include ::Phase::Mixins::Loggable
 
       command :ssh do |c|
         c.syntax = "phase ssh [-i instance_id] [-n instance_name] [-r instance_role] [-u user] [-c conn_str] [username@instance_name|instance_id]"
