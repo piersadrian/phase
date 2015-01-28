@@ -1,17 +1,19 @@
 module Phase
   module SSH
     class Backend < ::SSHKit::Backend::Netssh
-      include ::SSHKit::CommandHelper
-
-      def initialize(*args)
+      def initialize(host, options = {})
         # BUG: Backend::Netssh doesn't assign @pool when subclassed.
         self.class.pool = ::SSHKit::Backend::ConnectionPool.new
-        super
+        @host = host
       end
 
       def on_remote_host(remote_host, &block)
         @remote_host = remote_host
         yield
+      end
+
+      def run(&block)
+        instance_exec(host, &block)
       end
 
       private

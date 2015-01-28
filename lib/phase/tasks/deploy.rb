@@ -47,7 +47,7 @@ module Deploy
     end
 
     def commit_deployment!
-      system("git commit -m 'Preparing to release v#{ ::Deploy.current_version }' -e")
+      system("git commit -m 'Preparing to release v#{ current_version }' -e")
     end
 
     def current_version
@@ -69,7 +69,7 @@ module Deploy
     end
 
     def precompile_assets
-      system("RAILS_GROUPS=assets RAILS_ENV=#{ ::Deploy.environment } rake assets:precompile")
+      system("RAILS_GROUPS=assets RAILS_ENV=#{ environment } rake assets:precompile")
     end
 
     def raise_on_dirty_index!
@@ -98,7 +98,7 @@ module Deploy
     end
 
     def sync_assets
-      system("RAILS_GROUPS=assets RAILS_ENV=#{ ::Deploy.environment } rake assets:sync")
+      system("RAILS_GROUPS=assets RAILS_ENV=#{ environment } rake assets:sync")
     end
 
     def write_version(version_num)
@@ -108,9 +108,9 @@ module Deploy
 
       ::File.open(VERSION_RBFILE_PATH, 'w') do |file|
         file.write <<-VERSION.strip_heredoc
-        module Harpoon
-          VERSION = "#{version_num}"
-        end
+          module Harpoon
+            VERSION = "#{version_num}"
+          end
         VERSION
       end
     end
