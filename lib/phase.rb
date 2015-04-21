@@ -1,25 +1,24 @@
-require 'terminal-table'
-require 'active_support'
-require 'progressbar'
+require 'active_support/all'
+require 'capistrano'
 require 'colorize'
 require 'fog'
-require 'capistrano'
+require 'progressbar'
+require 'pry'
 require 'sshkit'
+require 'terminal-table'
 
-require 'dotenv'
-::Dotenv.load if defined?(::Dotenv)
 
 require 'phase/adapter'
 require 'phase/adapters/abstract'
 require 'phase/adapters/aws'
 
-require "phase/mixins/loggable"
+require "phase/util/console"
 
-require 'phase/ssh/backend'
-# require 'phase/ssh/bastion'
-require 'phase/ssh/bastion_coordinator'
-require 'phase/ssh/command'
-require 'phase/ssh/runners'
+require 'phase/kit/ssh/backend'
+# require 'phase/kit/ssh/bastion'
+require 'phase/kit/ssh/bastion_coordinator'
+require 'phase/kit/ssh/command'
+require 'phase/kit/ssh/runners'
 
 require 'phase/configuration'
 require 'phase/version'

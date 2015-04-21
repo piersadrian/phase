@@ -1,6 +1,6 @@
 module Phase
   module Util
-    module Loggable
+    module Console
 
       def log(str)
         puts "[phase]".green + " #{ str }"

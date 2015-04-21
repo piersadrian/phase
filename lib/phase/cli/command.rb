@@ -1,6 +1,7 @@
 module Phase
   module CLI
     class Command
+      include ::Phase::Util::Console
 
       class << self
         include ::Commander::Methods
