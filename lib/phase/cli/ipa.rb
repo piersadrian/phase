@@ -26,7 +26,11 @@ module Phase
         end
 
         if Phase.config.bundle_id_prefix.blank?
-          fail "missing setting: set `Phase.config.bundle_id_prefix = ...` in Phasefile"
+          fail "missing setting: set `Phase.config.bundle_id_prefix = [PREFIX] in Phasefile"
+        elsif Phase.config.ipa_bucket_name.blank?
+          fail "missing setting: set `Phase.config.ipa_bucket_name = [BUCKET]` in Phasefile"
+        elsif Phase.config.ipa_directory_prefix.blank?
+          fail "missing setting: set `Phase.config.ipa_directory_prefix = [PREFIX] in Phasefile"
         end
 
         super
@@ -34,7 +38,7 @@ module Phase
 
       def run
         deployment = ::Phase::IPA::EnterpriseDeployment.new(version, *filenames)
-        deployment.build!
+        deployment.run!
       end
 
     end

@@ -1,22 +1,12 @@
 module Phase
   module IPA
     class App
-      attr_reader :name, :version
+      attr_reader :qualified_path, :name, :version
+      attr_accessor :download_url
 
-      def initialize(name, version)
-        @name, @version = name, version
-      end
-
-      def human_name
-        name.titleize
-      end
-
-      def bundle_name
-        name.camelize
-      end
-
-      def bundle_id_prefix
-        Phase.config.bundle_id_prefix
+      def initialize(qualified_path, version)
+        @qualified_path, @version = qualified_path, version
+        @name = ::File.basename(qualified_path, ".ipa")
       end
 
       def ipa_filename
@@ -62,6 +52,20 @@ module Phase
           </plist>
         EOXML
       end
+
+      private
+
+        def human_name
+          name.titleize
+        end
+
+        def bundle_name
+          name.camelize
+        end
+
+        def bundle_id_prefix
+          Phase.config.bundle_id_prefix
+        end
     end
   end
 end
