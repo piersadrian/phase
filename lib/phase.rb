@@ -3,7 +3,6 @@ require 'capistrano'
 require 'colorize'
 require 'fog'
 require 'progressbar'
-require 'pry'
 require 'sshkit'
 require 'terminal-table'
 

@@ -29,14 +29,22 @@ module Phase
           write_plist!(app)
           copy_ipa!(app)
           upload!(app)
+
+          log "...done"
+          log ""
         end
 
         write_manifest!
       end
 
       def write_manifest!
-        ::File.join(::Dir.pwd, version, "manifest.txt") do |file|
-          apps.each { |app| file << app.install_link }
+        log "writing manifest"
+
+        manifest_path = ::File.join(::Dir.pwd, version, "manifest.txt")
+        ::File.open(manifest_path, 'w') do |file|
+          apps.each do |app|
+            file << "itms-services://?action=download-manifest&url=https://s3.amazonaws.com/#{bucket}/#{prefix}/#{app.plist_filename}"
+          end
         end
       end
 
