@@ -32,6 +32,8 @@ module Phase
 
           log "...done"
           log ""
+
+          app
         end
 
         write_manifest!
