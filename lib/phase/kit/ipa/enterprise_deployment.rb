@@ -45,7 +45,15 @@ module Phase
         manifest_path = ::File.join(::Dir.pwd, version, "manifest.txt")
         ::File.open(manifest_path, 'w') do |file|
           apps.each do |app|
-            file << "itms-services://?action=download-manifest&url=https://s3.amazonaws.com/#{bucket}/#{prefix}/#{app.plist_filename}"
+            url = [
+              "itms-services://?action=download-manifest&url=https://s3.amazonaws.com",
+              bucket.key,
+              prefix,
+              app.plist_filename
+            ].join("/")
+
+            file << url
+            file << "\n"
           end
         end
       end
