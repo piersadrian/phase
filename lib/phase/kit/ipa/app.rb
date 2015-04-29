@@ -60,7 +60,7 @@ module Phase
         end
 
         def bundle_name
-          name.camelize
+          name
         end
 
         def bundle_id_prefix
