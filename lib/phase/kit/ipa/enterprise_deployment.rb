@@ -15,8 +15,8 @@ module Phase
         @file_paths.uniq!
 
         @aws = ::Fog::Storage::AWS.new(region: Phase.config.aws_region)
-        @bucket = aws.directories.get(Phase.config.ipa_bucket_name)
-        @prefix = ::Pathname.new(Phase.config.ipa_directory_prefix)
+        @bucket = aws.directories.get(Phase.config.ipa.bucket_name)
+        @prefix = ::Pathname.new(Phase.config.ipa.directory_prefix)
 
         @apps = []
       end
@@ -24,47 +24,36 @@ module Phase
       def run!
         ::FileUtils.mkdir(version) rescue nil
 
-        @apps = file_paths.map do |path|
-          app = App.new(path, version)
-          write_plist!(app)
-          copy_ipa!(app)
-          upload!(app)
-
-          log "...done"
-          log ""
-
-          app
-        end
-
-        write_manifest!
-      end
-
-      def write_manifest!
-        log "writing manifest"
-
         manifest_path = ::File.join(::Dir.pwd, version, "manifest.txt")
-        ::File.open(manifest_path, 'w') do |file|
-          apps.each do |app|
-            url = [
-              "itms-services://?action=download-manifest&url=https://s3.amazonaws.com",
-              bucket.key,
-              prefix,
-              app.plist_filename
-            ].join("/")
+        ::File.open(manifest_path, 'w') do |manifest|
+          file_paths.map do |path|
+            app = App.new(path, version)
+            app.download_url = download_url(app)
 
-            file << url
-            file << "\n"
+            log "#{app.name}: writing .plist..."
+            write_plist!(app)
+
+            log "#{app.name}: copying .ipa..."
+            copy_ipa!(app)
+
+            log "#{app.name}: uploading files..."
+            upload!(app)
+
+            log "#{app.name}: updating manifest..."
+            manifest << manifest_url(app)
+            manifest << "\n"
+
+            log "#{app.name}: done"
+            log ""
           end
         end
       end
 
       def write_plist!(app)
-        log "#{app.name}: writing .plist"
         ::File.open(plist_path(app), 'w') { |file| file << app.plist_xml }
       end
 
       def copy_ipa!(app)
-        log "#{app.name}: copying .ipa"
         ::FileUtils.cp(app.qualified_path, ipa_path(app))
       end
 
@@ -81,14 +70,29 @@ module Phase
           acl: "public-read"
         })
 
-        log "#{app.name}: uploading .ipa"
         ipa.save
-
-        log "#{app.name}: uploading .plist"
         plist.save
       end
 
       private
+
+        def download_url(app)
+          [
+            "https://s3.amazonaws.com",
+            bucket.key,
+            prefix,
+            app.ipa_filename
+          ].join("/")
+        end
+
+        def manifest_url(app)
+          [
+            "itms-services://?action=download-manifest&url=https://s3.amazonaws.com",
+            bucket.key,
+            prefix,
+            app.plist_filename
+          ].join("/")
+        end
 
         def plist_path(app)
           ::File.join(::Dir.pwd, version, app.plist_filename)

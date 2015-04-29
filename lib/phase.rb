@@ -1,6 +1,7 @@
 require 'active_support/all'
 require 'capistrano'
 require 'colorize'
+require 'erb'
 require 'fog'
 require 'progressbar'
 require 'sshkit'

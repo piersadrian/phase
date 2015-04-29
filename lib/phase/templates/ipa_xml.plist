@@ -1,0 +1,65 @@
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>items</key>
+        <array>
+            <dict>
+                <key>assets</key>
+                <array>
+                    <dict>
+                        <key>kind</key>
+                        <string>software-package</string>
+                        <!-- optional.  md5 every n bytes.  -->
+                        <!-- will restart a chunk if md5 fails. -->
+                        <!-- <key>md5-size</key>
+                        <integer>10485760</integer> -->
+
+                        <!-- optional.  array of md5 hashes -->
+                        <!-- <key>md5s</key>
+                        <array>
+                            <string>41fa64bb7a7cae5a46bfb45821ac8bba</string>
+                            <string>51fa64bb7a7cae5a46bfb45821ac8bba</string>
+                        </array> -->
+                        <key>url</key>
+                        <string><%= download_url %></string>
+                    </dict>
+
+                    <dict>
+                        <key>kind</key>
+                        <string>display-image</string>
+                        <key>needs-shine</key>
+                        <false/>
+                        <key>url</key>
+                        <string><%= icon_image_url %></string>
+                    </dict>
+
+                    <dict>
+                        <key>kind</key>
+                        <string>full-size-image</string>
+                        <!-- <key>md5</key>
+                        <string>61fa64bb7a7cae5a46bfb45821ac8bba</string> -->
+                        <key>needs-shine</key>
+                        <false/>
+                        <key>url</key>
+                        <string><%= full_image_url %></string>
+                    </dict>
+                </array>
+
+                <key>metadata</key>
+                <dict>
+
+                    <key>bundle-identifier</key>
+                    <string><%= "#{bundle_id_prefix}.#{bundle_name}" %></string>
+                    <key>bundle-version</key>
+                    <string><%= version %></string>
+                    <key>kind</key>
+                    <string>software</string>
+                    <key>subtitle</key>
+                    <string><%= company_name %></string>
+                    <key>title</key>
+                    <string><%= human_name %></string>
+                </dict>
+            </dict>
+        </array>
+    </dict>
+</plist>

@@ -2,8 +2,7 @@ module Phase
   class Configuration
 
     attr_accessor :bastions_enabled, :bastion_role, :bastion_user, :public_subnet_name,
-                  :private_subnet_name, :aws_region, :adapter, :backend,
-                  :bundle_id_prefix, :ipa_directory_prefix, :ipa_bucket_name
+                  :private_subnet_name, :aws_region, :adapter, :backend
 
     def initialize
       @bastions_enabled     = false
@@ -14,10 +13,6 @@ module Phase
       @aws_region           = "us-east-1"
       @adapter              = ::Phase::Adapters::AWS
 
-      @bundle_id_prefix     = ""
-      @ipa_directory_prefix = ""
-      @ipa_bucket_name      = ""
-
       self.backend = ::Phase::SSH::Backend
       set_aws_credentials!
     end
@@ -25,6 +20,17 @@ module Phase
     def backend=(backend)
       @backend = backend
       ::SSHKit.config.backend = @backend
+    end
+
+    # Available options:
+    #   * bundle_id_prefix
+    #   * directory_prefix
+    #   * bucket_name
+    #   * company_name
+    #   * full_image_url
+    #   * icon_image_url
+    def ipa
+      @ipa ||= ::ActiveSupport::OrderedOptions.new
     end
 
     def load_phasefile!
