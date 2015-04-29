@@ -23,12 +23,13 @@ module Phase
       end
 
       def run
-        # load_environment_config
-        # create_build_dir
-        # shallow_clone_repository
-        # build_docker_image
-        # push_docker_image
-        # trigger_remote_deployment
+        if environment == "sandbox"
+          deployment = ::Phase::Deploy::SandboxDeployment.new
+        else
+          deployment = ::Phase::Deploy::Deployment.new(environment)
+        end
+
+        deployment.execute!
       end
 
     end

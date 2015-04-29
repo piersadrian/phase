@@ -23,12 +23,18 @@ module Phase
     end
 
     # Available options:
-    #   * bundle_id_prefix
-    #   * directory_prefix
-    #   * bucket_name
-    #   * company_name
-    #   * full_image_url
-    #   * icon_image_url
+    #   * docker_repository [String]
+    def deploy
+      @deploy ||= ::ActiveSupport::OrderedOptions.new
+    end
+
+    # Available options:
+    #   * bundle_id_prefix [String]
+    #   * directory_prefix [String]
+    #   * bucket_name      [String]
+    #   * company_name     [String]
+    #   * full_image_url   [String]
+    #   * icon_image_url   [String]
     def ipa
       @ipa ||= ::ActiveSupport::OrderedOptions.new
     end

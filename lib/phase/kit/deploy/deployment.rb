@@ -1,26 +1,26 @@
 module Phase
   module Deploy
+
     class Deployment
-
-      # environment
-      # build options
-        # tag strategy
-      # server options
-        # environment name
-        # role name
-
-      attr_reader :build
+      attr_reader :environment, :build
 
       def initialize(environment, options = {})
-        case environment
-        when :sandbox
-          self.build = SandboxBuild.new
-        else
-          self.build = Build.new
-        end
+        @environment = environment
+        @build = Build.new(options[:version_tag])
+      end
 
-
+      def execute!
+        @build.execute
+        deploy_image
       end
     end
+
+
+    class SandboxDeployment < Deployment
+      def initialize(options = {})
+        @build = SandboxBuild.new(options[:version_tag])
+      end
+    end
+
   end
 end
