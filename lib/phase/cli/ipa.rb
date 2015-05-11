@@ -3,7 +3,9 @@ module Phase
     class IPA < Command
 
       command :ipa do |c|
-        c.syntax = "phase ipa [version_number] [filename|glob_pattern]..."
+        c.syntax = "phase ipa [-e environment] version_number filename|glob_pattern..."
+
+        c.option "-e", "--environment name", String, "Uploads files for 'production' or 'staging' (default is 'staging')."
 
         c.description = <<-EOS.strip_heredoc
           Generates enterprise distribution .plists for .ipa app bundles and uploads
@@ -11,6 +13,7 @@ module Phase
         EOS
 
         c.action do |args, options|
+          options.default environment: "staging"
           new(args, options).run
         end
       end
@@ -22,7 +25,7 @@ module Phase
         @filenames = args
 
         if @version.blank? || @filenames.blank?
-          fail "invalid syntax: phase ipa [version_number] [filename|glob_pattern]..."
+          fail "invalid syntax: phase ipa [-e environment] version_number filename|glob_pattern..."
         end
 
         if Phase.config.ipa.bundle_id_prefix.blank?
@@ -37,7 +40,7 @@ module Phase
       end
 
       def run
-        deployment = ::Phase::IPA::EnterpriseDeployment.new(version, *filenames)
+        deployment = ::Phase::IPA::EnterpriseDeployment.new(options.environment, version, *filenames)
         deployment.run!
       end
 

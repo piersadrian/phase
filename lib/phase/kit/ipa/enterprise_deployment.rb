@@ -3,9 +3,9 @@ module Phase
     class EnterpriseDeployment
       include ::Phase::Util::Console
 
-      attr_reader :version, :file_paths, :aws, :bucket, :prefix, :apps
+      attr_reader :version, :file_paths, :aws, :bucket, :prefix, :manifest_key
 
-      def initialize(version, *filenames)
+      def initialize(environment, version, *filenames)
         @version = version
         @file_paths = filenames.map do |name|
           ::Dir.glob( ::File.expand_path(name) )
@@ -18,7 +18,12 @@ module Phase
         @bucket = aws.directories.get(Phase.config.ipa.bucket_name)
         @prefix = ::Pathname.new(Phase.config.ipa.directory_prefix)
 
-        @apps = []
+        if environment == "production"
+          @manifest_key = "enterprise/manifest.json"
+        else
+          @manifest_key = "enterprise/manifest-staging.json"
+          @prefix = @prefix.join("staging")
+        end
       end
 
       def run!
@@ -84,7 +89,7 @@ module Phase
 
       def upload_manifest!(manifest_path)
         manifest = bucket.files.new({
-          key: "enterprise/manifest.json",
+          key: manifest_key,
           body: ::File.open(manifest_path),
           acl: "public-read"
         })
