@@ -24,29 +24,37 @@ module Phase
       def run!
         ::FileUtils.mkdir(version) rescue nil
 
-        manifest_path = ::File.join(::Dir.pwd, version, "manifest.txt")
-        ::File.open(manifest_path, 'w') do |manifest|
-          file_paths.map do |path|
-            app = App.new(path, version)
-            app.download_url = download_url(app)
+        manifest_hash = file_paths.reduce({}) do |hash, path|
+          app = App.new(path, version)
+          app.download_url = download_url(app)
 
-            log "#{app.name}: writing .plist..."
-            write_plist!(app)
+          log "#{app.name}: writing .plist..."
+          write_plist!(app)
 
-            log "#{app.name}: copying .ipa..."
-            copy_ipa!(app)
+          log "#{app.name}: copying .ipa..."
+          copy_ipa!(app)
 
-            log "#{app.name}: uploading files..."
-            upload!(app)
+          log "#{app.name}: uploading files..."
+          upload_app!(app)
 
-            log "#{app.name}: updating manifest..."
-            manifest << manifest_url(app)
-            manifest << "\n"
+          log "#{app.name}: building app manifest..."
+          hash[app.name] = {
+            latest_version: app.version,
+            download_url: manifest_url(app)
+          }
 
-            log "#{app.name}: done"
-            log ""
-          end
+          log "#{app.name}: done"
+          log ""
+
+          hash
         end
+
+        manifest_path = ::File.join(::Dir.pwd, version, "manifest.json")
+        ::File.write(manifest_path, manifest_hash.to_json)
+
+        log "uploading release manifest..."
+        upload_manifest!(manifest_path)
+        log "done"
       end
 
       def write_plist!(app)
@@ -57,7 +65,7 @@ module Phase
         ::FileUtils.cp(app.qualified_path, ipa_path(app))
       end
 
-      def upload!(app)
+      def upload_app!(app)
         ipa = bucket.files.new({
           key: prefix.join(app.ipa_filename),
           body: ::File.open(ipa_path(app)),
@@ -72,6 +80,16 @@ module Phase
 
         ipa.save
         plist.save
+      end
+
+      def upload_manifest!(manifest_path)
+        manifest = bucket.files.new({
+          key: "enterprise/manifest.json",
+          body: ::File.open(manifest_path),
+          acl: "public-read"
+        })
+
+        manifest.save
       end
 
       private
