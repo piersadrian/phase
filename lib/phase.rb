@@ -13,6 +13,10 @@ require 'phase/adapters/abstract'
 require 'phase/adapters/aws'
 
 require "phase/util/console"
+require "phase/util/shell"
+
+require 'phase/kit/deploy/build'
+require 'phase/kit/deploy/deployment'
 
 require 'phase/kit/ipa/app'
 require 'phase/kit/ipa/enterprise_deployment'
