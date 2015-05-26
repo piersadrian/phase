@@ -20,7 +20,6 @@ module Phase
       private
 
         def build_image
-          remove_stale_build_dir
           clone_local_repo
 
           shell("docker build -t #{repo_name}:#{version_tag} #{build_dir}") do |status|
@@ -28,11 +27,9 @@ module Phase
           end
         end
 
-        def remove_stale_build_dir
-          ::FileUtils.rm_r(build_dir)
-        end
-
         def clone_local_repo
+          remove_stale_build_dir!
+
           shell("git clone --depth 1 -- file://$(pwd) #{build_dir}") do |status|
             fail "couldn't clone local copy of git repository"
           end
@@ -49,9 +46,13 @@ module Phase
             fail "couldn't push #{repo_name}:#{version_tag}"
           end
 
-          shell("docker push #{repo_name}:latest") do |status|
-            fail "couldn't push #{repo_name}:latest"
-          end
+          # shell("docker push #{repo_name}:latest") do |status|
+          #   fail "couldn't push #{repo_name}:latest"
+          # end
+        end
+
+        def remove_stale_build_dir!
+          ::FileUtils.rm_r(build_dir)
         end
 
         def repo_name

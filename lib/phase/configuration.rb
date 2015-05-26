@@ -22,21 +22,14 @@ module Phase
       ::SSHKit.config.backend = @backend
     end
 
-    # Available options:
-    #   * docker_repository [String]
-    def deploy
-      @deploy ||= ::ActiveSupport::OrderedOptions.new
+    # @see Phase::Config::Docker
+    def docker
+      @docker ||= Config::Docker.new
     end
 
-    # Available options:
-    #   * bundle_id_prefix [String]
-    #   * directory_prefix [String]
-    #   * bucket_name      [String]
-    #   * company_name     [String]
-    #   * full_image_url   [String]
-    #   * icon_image_url   [String]
+    # @see Phase::Config::IPA
     def ipa
-      @ipa ||= ::ActiveSupport::OrderedOptions.new
+      @ipa ||= Config::IPA.new
     end
 
     def load_phasefile!
@@ -45,10 +38,10 @@ module Phase
       end
     end
 
-    def set_aws_credentials!
+    def set_aws_credentials!(access_key_id = nil, secret_access_key = nil)
       Fog.credentials = {
-        aws_access_key_id:     ENV.fetch('AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY')
+        aws_access_key_id:     ENV.fetch('AWS_ACCESS_KEY_ID', access_key_id),
+        aws_secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY', secret_access_key)
       }
     end
 
