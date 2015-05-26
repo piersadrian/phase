@@ -30,7 +30,8 @@ module Phase
         def clone_local_repo
           remove_stale_build_dir!
 
-          shell("git clone --depth 1 -- file://$(pwd) #{build_dir}") do |status|
+          current_branch = `git rev-parse --abbrev-ref HEAD`.strip
+          shell("git clone --reference $(pwd) --branch #{current_branch} --depth 1 -- file://$(pwd) #{build_dir}") do |status|
             fail "couldn't clone local copy of git repository"
           end
         end
@@ -52,33 +53,11 @@ module Phase
         end
 
         def remove_stale_build_dir!
-          ::FileUtils.rm_r(build_dir)
+          ::FileUtils.rm_rf(build_dir)
         end
 
         def repo_name
           ::Phase.config.deploy.docker_repository
-        end
-    end
-
-
-    class SandboxBuild < Build
-      def execute
-        build_image
-        push
-      end
-
-      private
-
-        def build_image
-          shell("docker build -t #{repo_name}:#{version_tag} .") do |status|
-            fail "couldn't build Docker image"
-          end
-        end
-
-        def push
-          shell("docker push #{repo_name}:#{version_tag}") do |status|
-            fail "couldn't push #{repo_name}:#{version_tag}"
-          end
         end
     end
 

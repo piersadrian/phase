@@ -3,12 +3,10 @@ module Phase
     class Deploy < Command
 
       command :deploy do |c|
-        c.syntax = "phase deploy [-e environment_name] version_number"
-
-        c.option "-e", "--env environment_name", String, "Deploy to this environment."
+        c.syntax = "phase deploy <environment_name> <version_number>"
 
         c.description = <<-EOS.strip_heredoc
-          Builds and deploys code to the specified 'environment_name'. 'environment_name' may be
+          Builds and deploys code to the specified <environment_name>, which may be
           any environment configured in the Phasefile.
         EOS
 
@@ -17,33 +15,25 @@ module Phase
         end
       end
 
-      attr_reader :version_number
+      attr_reader :env_name, :version_number
 
       def initialize(args, options)
         super
 
-        @version_number = args.first
+        fail "must specify both environment and version number" unless args.count >= 2
 
-        fail "must specify environment with '-e'" unless options.env
+        @env_name       = args[0]
+        @version_number = args[1]
+
+        fail "must specify environment"    unless env_name
         fail "must specify version number" unless version_number
       end
 
       def run
-        opts = {
-          version_tag: version_number
-        }
+        environment = config.deploy.environments.find { |e| e.name == env_name }
+        fail "unknown environment: '#{env_name}'" unless environment
 
-        deployment = case options.env
-        when "sandbox"
-          ::Phase::Deploy::SandboxDeployment.new(opts)
-        when "staging"
-          ::Phase::Deploy::StagingDeployment.new(opts)
-        when "production"
-          ::Phase::Deploy::ProductionDeployment.new(opts)
-        else
-          fail "unknown environment: '#{environment}'"
-        end
-
+        deployment = Deploy::Deployment.new(environment, version_tag: version_number)
         deployment.execute!
       end
 

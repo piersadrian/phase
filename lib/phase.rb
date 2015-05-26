@@ -28,7 +28,7 @@ require 'phase/kit/ssh/command'
 require 'phase/kit/ssh/runners'
 
 require 'phase/configuration'
-require 'phase/config/docker'
+require 'phase/config/deploy'
 require 'phase/config/ipa'
 
 require 'phase/version'

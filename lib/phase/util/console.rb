@@ -7,6 +7,7 @@ module Phase
       end
 
       def fail(str)
+        puts
         abort "[phase]".red + " #{ str }"
       end
 

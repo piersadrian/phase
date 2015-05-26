@@ -22,9 +22,9 @@ module Phase
       ::SSHKit.config.backend = @backend
     end
 
-    # @see Phase::Config::Docker
-    def docker
-      @docker ||= Config::Docker.new
+    # @see Phase::Config::Deploy
+    def deploy
+      @deploy ||= Config::Deploy.new
     end
 
     # @see Phase::Config::IPA

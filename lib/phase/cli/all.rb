@@ -1,5 +1,6 @@
 require "phase/cli/command"
 
+require "phase/cli/build"
 require "phase/cli/env"
 require "phase/cli/deploy"
 require "phase/cli/keys"
