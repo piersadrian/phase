@@ -20,20 +20,24 @@ module Phase
       private
 
         def build_image
-          clone_local_repo
+          prepare_build
 
           shell("docker build -t #{repo_name}:#{version_tag} #{build_dir}") do |status|
             fail "couldn't build Docker image"
           end
         end
 
-        def clone_local_repo
-          remove_stale_build_dir!
-
+        def clone_local_git_repo
           current_branch = `git rev-parse --abbrev-ref HEAD`.strip
           shell("git clone --reference $(pwd) --branch #{current_branch} --depth 1 -- file://$(pwd) #{build_dir}") do |status|
             fail "couldn't clone local copy of git repository"
           end
+        end
+
+        def prepare_build
+          remove_stale_build_dir!
+          clone_local_git_repo
+          set_file_modification_timestamps
         end
 
         # def tag_image
@@ -58,6 +62,10 @@ module Phase
 
         def repo_name
           ::Phase.config.deploy.docker_repository
+        end
+
+        def set_file_modification_timestamps
+          
         end
     end
 
