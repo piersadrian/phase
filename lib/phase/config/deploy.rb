@@ -13,8 +13,15 @@ module Phase
       attr_accessor :docker_repository
 
 
+      # @return [String] the path (relative to Phasefile) to the version lockfile (default "VERSION")
+      # @example Sample settings
+      #   config.deploy.version_lockfile = "lib/myproj/version.lock"
+      attr_accessor :version_lockfile
+
+
       def initialize
         @environments = []
+        @version_lockfile = "VERSION"
       end
 
       # Adds a new deployment environment.

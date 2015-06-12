@@ -3,7 +3,9 @@ module Phase
     class Build < Command
 
       command :build do |c|
-        c.syntax = "phase build <version_number>"
+        c.syntax = "phase build [-s]"
+
+        c.option "-s", "--sandbox", String, "Build in sandbox mode: uses current directory's possibly dirty git tree as build context."
 
         c.description = <<-EOS.strip_heredoc
           Builds a new Docker image of the latest committed code on the current branch. Tags the
@@ -11,24 +13,37 @@ module Phase
         EOS
 
         c.action do |args, options|
+          options.default(sandbox: false)
           new(args, options).run
         end
       end
 
-      attr_reader :version_number
+      attr_reader :clean_build, :version_number
 
       def initialize(args, options)
         super
-
-        @version_number = args[0]
-
-        fail "must specify version number" unless version_number
+        @clean_build = !options.sandbox
       end
 
       def run
-        build = ::Phase::Deploy::Build.new(version_number)
+        version_number = get_next_version_number
+        ::Phase::Deploy::Version.update(version_number) if clean_build
+
+        build = ::Phase::Deploy::Build.new(version_number, clean: clean_build)
         build.execute!
       end
+
+      private
+
+        def get_next_version_number
+          current_version = ::Phase::Deploy::Version.current
+
+          log "Last release was version #{ current_version.magenta }." if current_version
+
+          input = ask "New version number:"
+          fail "version number is required" if input.blank?
+          input
+        end
 
     end
   end

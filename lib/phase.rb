@@ -17,6 +17,7 @@ require "phase/util/shell"
 
 require 'phase/kit/deploy/build'
 require 'phase/kit/deploy/deployment'
+require 'phase/kit/deploy/version'
 
 require 'phase/kit/ipa/app'
 require 'phase/kit/ipa/enterprise_deployment'
