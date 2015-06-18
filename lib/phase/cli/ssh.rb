@@ -2,7 +2,7 @@ module Phase
   module CLI
     class SSH < Command
       command :ssh do |c|
-        c.syntax = "phase ssh [-i instance_id] [-n instance_name] [-r instance_role] [-u user] [-c conn_str] [username@instance_name|instance_id]"
+        c.syntax = "phase ssh [-i instance_id] [-n instance_name] [-r instance_role] [-u user] [-c conn_str] [username@instance_name|instance_id] [command...]"
 
         c.option "-i", "--id instance_id", String, "Connects to the instance with this ID."
         c.option "-n", "--name instance_name", String, "Connects to the instance with this 'Name' tag."
@@ -21,8 +21,15 @@ module Phase
 
       def run
         parse_connection_string
-        log "connecting to instance #{ instance.resource.id }..."
-        exec "#{ options.conn } #{ username }@#{ instance.resource.dns_name }"
+        ssh_command = args.last if args.count > 1
+
+        if ssh_command
+          log "running on instance #{ instance.resource.id }: `#{ ssh_command }'"
+          exec "#{ options.conn } #{ username }@#{ instance.resource.dns_name } #{ ssh_command }"
+        else
+          log "connecting to instance #{ instance.resource.id }..."
+          exec "#{ options.conn } #{ username }@#{ instance.resource.dns_name }"
+        end
       end
 
       private
