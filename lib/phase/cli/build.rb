@@ -27,9 +27,8 @@ module Phase
 
       def run
         version_number = get_next_version_number
-        ::Phase::Deploy::Version.update(version_number) if clean_build
 
-        build = ::Phase::Deploy::Build.new(version_number, clean: clean_build)
+        build = ::Phase::Deploy::Build.new(version_number, clean_build: clean_build)
         build.execute!
       end
 
@@ -41,7 +40,7 @@ module Phase
           log "Last release was version #{ current_version.magenta }." if current_version
 
           input = ask "New version number:"
-          fail "version number is required" if input.blank?
+          fail "Version number is required" if input.blank?
           input
         end
 

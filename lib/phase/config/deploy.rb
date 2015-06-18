@@ -19,6 +19,12 @@ module Phase
       attr_accessor :version_lockfile
 
 
+      # @return [String] the cloud storage bucket ("directory") for storing compiled assets
+      # @example Sample settings
+      #   config.deploy.docker_repository = "static-assets"
+      attr_accessor :asset_bucket
+
+
       def initialize
         @environments = []
         @version_lockfile = "VERSION"

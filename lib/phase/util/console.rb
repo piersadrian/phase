@@ -15,7 +15,6 @@ module Phase
 
       # Prints a message and then exits.
       def fail(str)
-        puts
         abort "[phase]".red + " #{ str }"
       end
 
