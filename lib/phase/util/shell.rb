@@ -5,7 +5,7 @@ module Phase
 
       def shell(*args)
         options = args.extract_options!
-        options.reverse_merge({
+        options.reverse_merge!({
           allow_failure: false
         })
 

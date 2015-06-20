@@ -80,7 +80,7 @@ module Phase
         # directory rather than building in a clean, committed environment. This could lead
         # to errors in the compiled assets.
         def precompile_assets
-          shell("RAILS_GROUPS=assets rake assets:precompile") do |status|
+          shell("RAILS_GROUPS=assets RAILS_ENV=production rake assets:precompile") do |status|
             fail "Couldn't precompile assets"
           end
         end
@@ -94,7 +94,7 @@ module Phase
         # This needs to run *before* the version gets updated so we know which version
         # number to pull from the registry.
         def pull_latest_build
-          shell("docker pull #{docker_repo}:#{::Phase::Deploy::Version.current}")
+          shell("docker pull #{docker_repo}:#{::Phase::Deploy::Version.current}", allow_failure: true)
         end
 
         def push
