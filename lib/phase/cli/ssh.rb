@@ -1,6 +1,9 @@
 module Phase
   module CLI
     class SSH < Command
+
+      DEFAULT_CONNECTION_STRING = "ssh -A".freeze
+
       command :ssh do |c|
         c.syntax = "phase ssh [-i instance_id] [-n instance_name] [-r instance_role] [-u user] [-c conn_str] [username@instance_name|instance_id] [command...]"
 
@@ -12,7 +15,7 @@ module Phase
 
         c.description = "Connects to the the specified instance via SSH."
         c.action do |args, options|
-          options.default role: ::Phase.config.bastion_role, conn: "ssh -A"
+          options.default role: ::Phase.config.bastion_role, conn: DEFAULT_CONNECTION_STRING
           new(args, options).run
         end
       end
@@ -24,6 +27,9 @@ module Phase
         ssh_command = args.last if args.count > 1
 
         if ssh_command
+          # Force pseudo-tty allocation for remote console/tail tasks
+          options.conn = "ssh -At" if options.conn == DEFAULT_CONNECTION_STRING
+
           log "running on instance #{ instance.resource.id }: `#{ ssh_command }'"
           exec "#{ options.conn } #{ username }@#{ instance.resource.dns_name } #{ ssh_command }"
         else
