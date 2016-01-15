@@ -51,8 +51,8 @@ module Phase
 
           shell("docker ps > /dev/null 2>&1") do |status|
             fail <<-EOS.strip_heredoc
-              Docker isn't responding. Is boot2docker running? Try:
-                  boot2docker start && $(boot2docker shellinit)
+              Docker isn't responding. Is docker-machine running? Try:
+                  docker-machine start dev && eval $(docker-machine env dev)
             EOS
           end
 
@@ -70,12 +70,6 @@ module Phase
           ::Phase.config.deploy.docker_repository
         end
 
-        def last_committed_mtime_for_file(file_path)
-          rev_hash = `git rev-list HEAD "#{file_path}" | head -n 1`.chomp
-          time_str = `git show --pretty=format:%ai --abbrev-commit #{rev_hash} | head -n 1`.chomp
-          ::DateTime.parse(time_str).to_time
-        end
-
         # FIXME: This approach isn't ideal because it compiles assets in the *working* git
         # directory rather than building in a clean, committed environment. This could lead
         # to errors in the compiled assets.
@@ -88,7 +82,6 @@ module Phase
         def prepare_clean_build
           remove_stale_build_dir!
           clone_local_git_repo
-          set_file_modification_timestamps
         end
 
         # This needs to run *before* the version gets updated so we know which version
@@ -111,38 +104,6 @@ module Phase
 
         def remove_stale_build_dir!
           ::FileUtils.rm_rf(build_dir)
-        end
-
-        def set_file_modification_timestamps
-          log("Preparing docker cache...")
-
-          # Threadsafe queue for multiple threads to pull from
-          queue = ::Queue.new
-
-          ::FileUtils.cd(build_dir) do
-            # Sets consistent mtime on directories because docker cares about that too
-            shell("find . -type d | xargs touch -t 7805200000")
-
-            files = `git ls-files`.split
-            files.each { |f| queue.push(f) }
-
-            bar = ::ProgressBar.new("Setting mtimes", files.count)
-
-            threads = 4.times.map do |idx|
-              ::Thread.new do
-                begin
-                  while path = queue.pop(true)
-                    ::FileUtils.touch(path, mtime: last_committed_mtime_for_file(path))
-                    bar.inc
-                  end
-                rescue ThreadError
-                end
-              end
-            end
-
-            threads.each(&:join)
-            bar.finish
-          end
         end
 
         def sync_assets
