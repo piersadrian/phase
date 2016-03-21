@@ -6,6 +6,7 @@ module Phase
         c.syntax = "phase build [-s]"
 
         c.option "-s", "--sandbox", String, "Build in sandbox mode: uses current directory's possibly dirty git tree as build context."
+        c.option "-n", "--version-number", String, "Build number to create."
 
         c.description = <<-EOS.strip_heredoc
           Builds a new Docker image of the latest committed code on the current branch. Tags the
@@ -23,16 +24,19 @@ module Phase
       def initialize(args, options)
         super
         @clean_build = !options.sandbox
+        @version_number = options.version_number
       end
 
       def run
-        version_number = get_next_version_number
-
         build = ::Phase::Deploy::Build.new(version_number, clean_build: clean_build)
         build.execute!
       end
 
       private
+
+        def version_number
+          @version_number ||= get_next_version_number
+        end
 
         def get_next_version_number
           current_version = ::Phase::Deploy::Version.current
