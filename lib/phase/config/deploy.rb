@@ -21,7 +21,7 @@ module Phase
 
       # @return [String] the cloud storage bucket ("directory") for storing compiled assets
       # @example Sample settings
-      #   config.deploy.docker_repository = "static-assets"
+      #   config.deploy.asset_bucket = "static-assets"
       attr_accessor :asset_bucket
 
 
