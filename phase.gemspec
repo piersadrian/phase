@@ -6,7 +6,7 @@ require 'phase/version'
 Gem::Specification.new do |spec|
   spec.name          = "phase"
   spec.version       = Phase::VERSION
-  spec.authors       = ["Piers Mainwaring", "Orca Health, Inc."]
+  spec.authors       = ["Piers Mainwaring"]
   spec.email         = ["piers@impossibly.org"]
   spec.summary       = "A simple way to manage cloud instances within a multi-subnet network, like an AWS VPC."
   spec.description   = ""
